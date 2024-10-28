@@ -52,4 +52,6 @@ public class ArmSubsystem {
         return ls.getState();
     }
 
+    public int extensionEncoderCounts(){return exm.getCurrentPosition();}
+
 }

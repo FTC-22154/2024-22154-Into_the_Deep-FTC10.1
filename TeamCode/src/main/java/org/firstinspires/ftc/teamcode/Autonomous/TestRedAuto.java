@@ -21,6 +21,7 @@ public class TestRedAuto extends LinearOpMode {
         armSubsystem = new ArmSubsystem(hardwareMap);
 
         waitForStart();
+        //TODO REMEMBER TO ADD SLEEP FUNCTIONS AS NEEDED
 
         mecanumSubsystem.encoderDrive("forward", 1440);
         elevatorSubsystem.encoderElevator(1440);

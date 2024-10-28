@@ -21,6 +21,7 @@ public class AutonTemplate extends LinearOpMode {
         armSubsystem = new ArmSubsystem(hardwareMap);
 
         waitForStart();
+        //TODO REMEMBER TO ADD SLEEP FUNCTIONS AS NEEDED
 
     }
 }

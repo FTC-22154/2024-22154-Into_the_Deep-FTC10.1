@@ -52,4 +52,12 @@ public class ElevatorSubsystem{
         }
     }
 
+    public double leftEncoderCounts(){
+        return elm.getCurrentPosition();
+    }
+
+    public double rightEncoderCounts(){
+        return erm.getCurrentPosition();
+    }
+
 }

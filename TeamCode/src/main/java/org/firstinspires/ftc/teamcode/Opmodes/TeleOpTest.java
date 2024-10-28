@@ -40,8 +40,12 @@ public class TeleOpTest extends OpMode {
         }
 
         mecanumSubsystem.TeleOperatedDrive(forward, -strafe, turn);
-        elevatorSubsystem.elevator(elevate);
+        elevatorSubsystem.elevator(elevate * -0.5);
         armSubsystem.extendIntake(extend);
 
+        telemetry.addData("leftElevatorEncoderCounts", elevatorSubsystem.leftEncoderCounts());
+        telemetry.addData("rightElevatorEncoderCounts", elevatorSubsystem.rightEncoderCounts());
+        telemetry.addData("extensionMotorEncoderCounts", armSubsystem.extensionEncoderCounts());
+        telemetry.update();
     }
 }
