@@ -5,17 +5,19 @@ import com.qualcomm.robotcore.hardware.AnalogSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.configuration.annotations.DigitalIoDeviceType;
 
 public class ArmSubsystem {
 
     DcMotor exm, im;
 
-    AnalogInput ls;
+    TouchSensor ls;
 
     public ArmSubsystem(HardwareMap hardwareMap){
         exm = hardwareMap.get(DcMotor.class,"exm");
         im = hardwareMap.get(DcMotor.class,"im");
-        ls = hardwareMap.get(AnalogInput.class, "ls");
+        ls = hardwareMap.get(TouchSensor.class, "ls");
 
         exm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         im.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -51,7 +53,7 @@ public class ArmSubsystem {
     }
 
     public boolean blockInGrabber(){
-        return ls.equals(true);
+        return ls.isPressed();
     }
 
     public int extensionEncoderCounts(){return exm.getCurrentPosition();}
