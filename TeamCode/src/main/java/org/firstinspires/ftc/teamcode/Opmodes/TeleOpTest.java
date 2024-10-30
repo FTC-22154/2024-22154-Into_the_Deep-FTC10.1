@@ -19,11 +19,17 @@ public class TeleOpTest extends OpMode {
         mecanumSubsystem = new MecanumSubsystem(hardwareMap);
         elevatorSubsystem = new ElevatorSubsystem(hardwareMap);
         armSubsystem = new ArmSubsystem(hardwareMap);
-
     }
 
     @Override
     public void loop(){
+
+        telemetry.addData("limitSwitchLimitSwitching?", armSubsystem.blockInGrabber());
+        telemetry.addData("leftElevatorEncoderCounts", elevatorSubsystem.leftEncoderCounts());
+        telemetry.addData("rightElevatorEncoderCounts", elevatorSubsystem.rightEncoderCounts());
+        telemetry.addData("extensionMotorEncoderCounts", armSubsystem.extensionEncoderCounts());
+        telemetry.addData("isA?", gamepad2.a);
+
 
         double forward = -gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
@@ -43,9 +49,6 @@ public class TeleOpTest extends OpMode {
         elevatorSubsystem.elevator(elevate * -0.5);
         armSubsystem.extendIntake(extend);
 
-        telemetry.addData("leftElevatorEncoderCounts", elevatorSubsystem.leftEncoderCounts());
-        telemetry.addData("rightElevatorEncoderCounts", elevatorSubsystem.rightEncoderCounts());
-        telemetry.addData("extensionMotorEncoderCounts", armSubsystem.extensionEncoderCounts());
         telemetry.update();
     }
 }

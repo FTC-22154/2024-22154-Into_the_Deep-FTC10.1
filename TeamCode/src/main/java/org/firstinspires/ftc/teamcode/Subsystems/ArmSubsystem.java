@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.AnalogSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -8,12 +10,12 @@ public class ArmSubsystem {
 
     DcMotor exm, im;
 
-    DigitalChannel ls;
+    AnalogInput ls;
 
     public ArmSubsystem(HardwareMap hardwareMap){
         exm = hardwareMap.get(DcMotor.class,"exm");
         im = hardwareMap.get(DcMotor.class,"im");
-        ls = hardwareMap.get(DigitalChannel.class, "ls");
+        ls = hardwareMap.get(AnalogInput.class, "ls");
 
         exm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         im.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -49,7 +51,7 @@ public class ArmSubsystem {
     }
 
     public boolean blockInGrabber(){
-        return ls.getState();
+        return ls.equals(true);
     }
 
     public int extensionEncoderCounts(){return exm.getCurrentPosition();}
