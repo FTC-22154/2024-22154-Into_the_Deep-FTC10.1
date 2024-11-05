@@ -34,22 +34,39 @@ public class ElevatorSubsystem{
         erm.setPower(power);
     }
 
-    public void encoderElevator(double counts){
+    public void encoderElevator(String direction, int counts){
+
+        switch(direction){
+            case "down":
+                elm.setTargetPosition(elm.getCurrentPosition() + counts);
+                erm.setTargetPosition(erm.getCurrentPosition() + counts);
+                elm.setPower(0.75);
+                erm.setPower(0.75);
+                break;
+            case "up":
+                elm.setTargetPosition(elm.getCurrentPosition() - counts);
+                erm.setTargetPosition(elm.getTargetPosition() - counts);
+                elm.setPower(-0.75);
+                erm.setPower(-0.75);
+                break;
+            default:
+                break;
+        }
         if(elm.getMode() != DcMotor.RunMode.RUN_TO_POSITION){
             elm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             erm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-        int lTarget = Math.toIntExact(Math.round(elm.getCurrentPosition() + counts));
-        int rTarget = Math.toIntExact(Math.round(elm.getCurrentPosition() + counts));
-        elm.setTargetPosition(lTarget);
-        erm.setTargetPosition(rTarget);
-        if(counts < 0){
-            elm.setPower(-0.75);
-            erm.setPower(-0.75);
-        }else{
-            elm.setPower(0.75);
-            erm.setPower(0.75);
-        }
+//        int lTarget = Math.toIntExact(Math.round(elm.getCurrentPosition() + counts));
+//        int rTarget = Math.toIntExact(Math.round(elm.getCurrentPosition() + counts));
+//        elm.setTargetPosition(lTarget);
+//        erm.setTargetPosition(rTarget);
+//        if(counts < 0){
+//            elm.setPower(-0.75);
+//            erm.setPower(-0.75);
+//        }else{
+//            elm.setPower(0.75);
+//            erm.setPower(0.75);
+//        }
     }
 
     public double leftEncoderCounts(){
@@ -58,6 +75,15 @@ public class ElevatorSubsystem{
 
     public double rightEncoderCounts(){
         return erm.getCurrentPosition();
+    }
+
+    public boolean eleMotorsBusy(){
+        return elm.isBusy() || erm.isBusy();
+    }
+
+    public void eleMotorsOff(){
+        elm.setPower(0);
+        erm.setPower(0);
     }
 
 }

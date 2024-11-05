@@ -23,8 +23,8 @@ public class TestRedAuto extends LinearOpMode {
         waitForStart();
         //TODO REMEMBER TO ADD SLEEP FUNCTIONS AS NEEDED
 
-        mecanumSubsystem.encoderDrive("forward", 1440);
-        elevatorSubsystem.encoderElevator(1440);
-        armSubsystem.encoderExtend(1440);
+//        mecanumSubsystem.encoderDrive("forward", 1440);
+//        elevatorSubsystem.encoderElevator(1440);
+//        armSubsystem.encoderExtend(1440);
     }
 }

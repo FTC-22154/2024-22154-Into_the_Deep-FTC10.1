@@ -32,8 +32,8 @@ public class TeleOpTest extends OpMode {
 
 
         double forward = -gamepad1.left_stick_y;
-        double turn = -gamepad1.right_stick_x;
-        double strafe = gamepad1.left_stick_x;
+        double turn = gamepad1.right_stick_x;
+        double strafe = -gamepad1.left_stick_x;
         double elevate = -gamepad2.left_stick_y;
         double extend = -gamepad2.right_stick_y;
 
@@ -41,6 +41,8 @@ public class TeleOpTest extends OpMode {
             armSubsystem.intake(1);
         } else if (gamepad2.b){
             armSubsystem.intake(-1);
+        }else if (gamepad2.a && armSubsystem.blockInGrabber()) {
+            armSubsystem.intake(0);
         }else{
             armSubsystem.intake(0);
         }
