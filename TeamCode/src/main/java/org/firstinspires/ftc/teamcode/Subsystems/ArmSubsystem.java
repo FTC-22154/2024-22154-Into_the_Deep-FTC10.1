@@ -5,18 +5,17 @@ import com.qualcomm.robotcore.hardware.AnalogSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class ArmSubsystem {
 
     DcMotor exm, im;
 
-    TouchSensor ls;
+    AnalogInput ls;
 
     public ArmSubsystem(HardwareMap hardwareMap){
         exm = hardwareMap.get(DcMotor.class,"exm");
         im = hardwareMap.get(DcMotor.class,"im");
-        ls = hardwareMap.get(TouchSensor.class, "ls");
+        ls = hardwareMap.get(AnalogInput.class, "ls");
 
         exm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         im.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -36,28 +35,7 @@ public class ArmSubsystem {
         exm.setPower(power);
     }
 
-    public boolean extMotorBusy(){
-        return exm.isBusy();
-    }
-
-    public void extMotorOff(){
-        exm.setPower(0);
-    }
-
-    public void encoderExtend(String direction, int counts){
-
-        switch(direction){
-            case "out":
-                exm.setTargetPosition(exm.getTargetPosition() + counts);
-                exm.setPower(0.5);
-                break;
-            case "in":
-                exm.setTargetPosition(exm.getTargetPosition() - counts);
-                exm.setPower(0.5);
-                break;
-            default:
-                break;
-        }
+    public void encoderExtend(double counts){
         exm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         int eTarget = Math.toIntExact(Math.round(exm.getCurrentPosition() + counts));
         exm.setTargetPosition(eTarget);
@@ -73,7 +51,7 @@ public class ArmSubsystem {
     }
 
     public boolean blockInGrabber(){
-            return ls.isPressed();
+        return ls.equals(true);
     }
 
     public int extensionEncoderCounts(){return exm.getCurrentPosition();}
