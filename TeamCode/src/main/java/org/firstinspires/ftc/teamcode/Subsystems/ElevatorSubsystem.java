@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -50,6 +54,40 @@ public class ElevatorSubsystem{
             elm.setPower(0.75);
             erm.setPower(0.75);
         }
+    }
+
+    public class ElevatorAuto implements Action {
+        private boolean initialized = false;
+        public int targetPos;
+        ElevatorAuto(int targetPos){
+            this.targetPos = targetPos;
+        }
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            double lpos = elm.getCurrentPosition();
+            double rpos = erm.getCurrentPosition();
+            if (!initialized && lpos > targetPos) {
+                elm.setPower(-0.75);
+                erm.setPower(-0.75);
+                initialized = true;
+            } else if (!initialized && lpos < targetPos) {
+                elm.setPower(0.75);
+                erm.setPower(0.75);
+                initialized = true;
+            }
+            packet.put("liftPosLeft", lpos);
+            packet.put("liftPosRight", rpos);
+            if ((elm.getPower() == -0.75 && lpos < targetPos) || (elm.getPower() == 0.75 && lpos > targetPos)) {
+                return true;
+            } else {
+                elm.setPower(0);
+                erm.setPower(0);
+                return false;
+            }
+        }
+    }
+    public Action elevatorAuto(int targetPos){
+        return new ElevatorAuto(targetPos);
     }
 
     public double leftEncoderCounts(){

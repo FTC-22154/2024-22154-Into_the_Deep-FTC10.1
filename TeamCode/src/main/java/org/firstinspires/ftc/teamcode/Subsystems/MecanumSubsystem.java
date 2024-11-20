@@ -40,19 +40,19 @@ public class MecanumSubsystem {
         rr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //Set Motors to Run With Encoders
-        lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        lr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void TeleOperatedDrive(double forward, double strafe, double turn) {
 
-        if(lf.getMode() != DcMotor.RunMode.RUN_USING_ENCODER){
-            lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            lr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        if(lf.getMode() != DcMotor.RunMode.RUN_WITHOUT_ENCODER){
+            lf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            lr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         double[] speeds = {
