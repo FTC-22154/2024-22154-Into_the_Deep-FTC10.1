@@ -46,6 +46,18 @@ public class MecanumSubsystem {
 //        rr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public int perpEncoderCounts(){
+        return  lf.getCurrentPosition();
+    }
+
+    public int para0EncoderCounts(){
+        return  lr.getCurrentPosition();
+    }
+
+    public int para1EncoderCounts(){
+        return  rr.getCurrentPosition();
+    }
+
     public void TeleOperatedDrive(double forward, double strafe, double turn) {
 
         if(lf.getMode() != DcMotor.RunMode.RUN_WITHOUT_ENCODER){
