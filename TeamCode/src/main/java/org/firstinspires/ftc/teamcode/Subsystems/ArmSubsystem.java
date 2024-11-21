@@ -12,12 +12,12 @@ public class ArmSubsystem {
 
     DcMotor exm, im;
 
-    TouchSensor ls;
+    //TouchSensor ls;
 
     public ArmSubsystem(HardwareMap hardwareMap){
         exm = hardwareMap.get(DcMotor.class,"exm");
         im = hardwareMap.get(DcMotor.class,"im");
-        ls = hardwareMap.get(TouchSensor.class, "ls");
+        //ls = hardwareMap.get(TouchSensor.class, "ls");
 
         exm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         im.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -106,9 +106,9 @@ public class ArmSubsystem {
         im.setPower(power);
     }
 
-    public boolean blockInGrabber(){
-        return ls.isPressed();
-    }
+//    //public boolean blockInGrabber(){
+//        return ls.isPressed();
+//    }
 
     public int extensionEncoderCounts(){return exm.getCurrentPosition();}
 

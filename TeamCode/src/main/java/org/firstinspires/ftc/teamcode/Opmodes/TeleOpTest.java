@@ -13,7 +13,7 @@ public class TeleOpTest extends OpMode {
     MecanumSubsystem mecanumSubsystem;
     ElevatorSubsystem elevatorSubsystem;
     ArmSubsystem armSubsystem;
-    private boolean limitSwitchPressed = false;
+    //private boolean limitSwitchPressed = false;
 
     @Override
     public void init(){
@@ -25,7 +25,7 @@ public class TeleOpTest extends OpMode {
     @Override
     public void loop(){
 
-        telemetry.addData("limitSwitchLimitSwitching?", armSubsystem.blockInGrabber());
+        //telemetry.addData("limitSwitchLimitSwitching?", armSubsystem.blockInGrabber());
         telemetry.addData("leftElevatorEncoderCounts", elevatorSubsystem.leftEncoderCounts());
         telemetry.addData("rightElevatorEncoderCounts", elevatorSubsystem.rightEncoderCounts());
         telemetry.addData("extensionMotorEncoderCounts", armSubsystem.extensionEncoderCounts());
@@ -41,21 +41,12 @@ public class TeleOpTest extends OpMode {
         double elevate = -gamepad2.left_stick_y;
         double extend = -gamepad2.right_stick_y;
 
-        while (gamepad2.a){
-            if (armSubsystem.blockInGrabber()){
-                limitSwitchPressed = true;
-            }
-            if (limitSwitchPressed){
-                armSubsystem.intake(0);
-            } else {
+        if (gamepad2.a){
                 armSubsystem.intake(1);
-            }
-        }
-        if (!gamepad2.a && gamepad2.b){
+        } else if (gamepad2.b){
             armSubsystem.intake(-1);
-        }else if (!gamepad2.a && !gamepad2.b){
+        }else {
             armSubsystem.intake(0);
-            limitSwitchPressed = false;
         }
 
         mecanumSubsystem.TeleOperatedDrive(forward, -strafe, -turn);
