@@ -39,7 +39,8 @@ public class TestRedAuto extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         traj1,
-                        elevatorSubsystem.elevatorAuto(3000)
+                        elevatorSubsystem.elevatorAuto(3000),
+                        armSubsystem.intakeAuto(0)
 
                 )
         );
