@@ -30,12 +30,12 @@ public class AutoBucketLow extends LinearOpMode {
         encoderElePos("down", 4176, 5);
     }
 
-    public void encoderExtPos(String direction, int counts, double timeout){
-        armSubsystem.encoderExtend(direction, counts);
-        runtime.reset();
-        while ((opModeIsActive() && runtime.seconds() < timeout && armSubsystem.extMotorBusy())){}
-        armSubsystem.extMotorOff();
-    }
+//    public void encoderExtPos(String direction, int counts, double timeout){
+//        armSubsystem.encoderExtend(direction, counts);
+//        runtime.reset();
+//        while ((opModeIsActive() && runtime.seconds() < timeout && armSubsystem.extMotorBusy())){}
+//        armSubsystem.extMotorOff();
+    //}
     public void encoderElePos(String direction, int counts, double timeout){
         elevatorSubsystem.encoderElevator(direction, counts);
         runtime.reset();

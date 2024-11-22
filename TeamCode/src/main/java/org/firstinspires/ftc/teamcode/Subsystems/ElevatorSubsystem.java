@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class ElevatorSubsystem{
@@ -12,17 +13,16 @@ public class ElevatorSubsystem{
         elm = hardwareMap.get(DcMotor.class,"elm");
         erm = hardwareMap.get(DcMotor.class,"erm");
 
-        elm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        erm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         elm.setDirection(DcMotor.Direction.REVERSE);
         erm.setDirection(DcMotor.Direction.FORWARD);
 
-        elm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        erm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        elm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        erm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elm.setTargetPosition(0);
+        erm.setTargetPosition(0);
 
-        elm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        erm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        elm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        erm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void elevator(double power){
@@ -32,6 +32,16 @@ public class ElevatorSubsystem{
         }
         elm.setPower(power);
         erm.setPower(power);
+    }
+
+    public void elevatorLift(double power){
+        if(power > 0.03) {
+            elm.setTargetPosition(elm.getCurrentPosition() + 200);
+            erm.setTargetPosition(erm.getCurrentPosition() + 200);
+        } else if(power < -0.03){
+            elm.setTargetPosition(elm.getCurrentPosition() - 200);
+            erm.setTargetPosition(erm.getCurrentPosition() - 200);
+        }
     }
 
     public void encoderElevator(String direction, int counts){

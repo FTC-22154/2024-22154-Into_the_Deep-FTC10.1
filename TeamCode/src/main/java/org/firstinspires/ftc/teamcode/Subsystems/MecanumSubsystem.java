@@ -1,11 +1,19 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.roadrunner.ftc.Encoder;
+import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class MecanumSubsystem {
 
     DcMotor lf, lr, rf, rr;
+    DcMotor le,re,me;
     /*
     lf is left front drive
     lr is left rear drive
@@ -20,6 +28,9 @@ public class MecanumSubsystem {
         lr = hardwareMap.get(DcMotor.class,"lr");
         rr = hardwareMap.get(DcMotor.class,"rr");
         rf = hardwareMap.get(DcMotor.class,"rf");
+       // le = hardwareMap.get(DcMotor.class,"le");
+        //        re = hardwareMap.get(Encoder.class,"re");
+//        me = hardwareMap.get(Encoder.class,"me");
 
         //Set Motors to Brake Mode
         lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -47,13 +58,6 @@ public class MecanumSubsystem {
     }
 
     public void TeleOperatedDrive(double forward, double strafe, double turn) {
-
-//        if(lf.getMode() != DcMotor.RunMode.RUN_USING_ENCODER){
-//            lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            lr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            rr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        }
 
         double[] speeds = {
                 (forward + strafe + turn),
@@ -132,6 +136,10 @@ public class MecanumSubsystem {
             rr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
+    }
+
+    public double encoderCounts(){
+        return lf.getCurrentPosition();
     }
 
     public void encoderTurn(String direction, int counts){
