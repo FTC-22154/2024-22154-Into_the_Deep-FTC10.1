@@ -46,15 +46,14 @@ public class MecanumSubsystem {
 //        rr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public int perpEncoderCounts(){
-        return  lf.getCurrentPosition();
-    }
-
-    public int para0EncoderCounts(){
+    public int leftRearCounts(){
         return  lr.getCurrentPosition();
     }
-
-    public int para1EncoderCounts(){
+    public int leftFrontCounts(){ return  lf.getCurrentPosition(); }
+    public int rightFrontCounts(){
+        return  rf.getCurrentPosition();
+    }
+    public int rightRearCounts(){
         return  rr.getCurrentPosition();
     }
 

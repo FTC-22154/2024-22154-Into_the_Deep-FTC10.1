@@ -29,9 +29,10 @@ public class TeleOpTest extends OpMode {
         telemetry.addData("leftElevatorEncoderCounts", elevatorSubsystem.leftEncoderCounts());
         telemetry.addData("rightElevatorEncoderCounts", elevatorSubsystem.rightEncoderCounts());
         telemetry.addData("extensionMotorEncoderCounts", armSubsystem.extensionEncoderCounts());
-        telemetry.addData("perpEncoderCounts", mecanumSubsystem.perpEncoderCounts());
-        telemetry.addData("leftEncoderCounts", mecanumSubsystem.para0EncoderCounts());
-        telemetry.addData("rightEncoderCounts", mecanumSubsystem.para1EncoderCounts());
+        telemetry.addData("leftRearEncoderCounts", mecanumSubsystem.leftRearCounts());
+        telemetry.addData("leftFrontEncoderCounts", mecanumSubsystem.leftFrontCounts());
+        telemetry.addData("rightFrontEncoderCounts", mecanumSubsystem.rightFrontCounts());
+        telemetry.addData("rightRearEncoderCounts", mecanumSubsystem.rightRearCounts());
         telemetry.addData("isA?", gamepad2.a);
 
 
@@ -49,7 +50,7 @@ public class TeleOpTest extends OpMode {
             armSubsystem.intake(0);
         }
 
-        mecanumSubsystem.TeleOperatedDrive(forward, -strafe, -turn);
+        mecanumSubsystem.TeleOperatedDrive(forward, strafe, -turn);
         elevatorSubsystem.elevator(elevate * -0.5);
         armSubsystem.extendIntake(extend);
 
