@@ -24,30 +24,50 @@ public class TeleOpTest extends OpMode {
     @Override
     public void loop(){
 
-        telemetry.addData("limitSwitchLimitSwitching?", armSubsystem.blockInGrabber());
-        telemetry.addData("leftElevatorEncoderCounts", elevatorSubsystem.leftEncoderCounts());
-        telemetry.addData("rightElevatorEncoderCounts", elevatorSubsystem.rightEncoderCounts());
+//        telemetry.addData("limitSwitchLimitSwitching?", armSubsystem.blockInGrabber());
+//        telemetry.addData("leftElevatorEncoderCounts", elevatorSubsystem.leftEncoderCounts());
+//        telemetry.addData("rightElevatorEncoderCounts", elevatorSubsystem.rightEncoderCounts());
         telemetry.addData("extensionMotorEncoderCounts", armSubsystem.extensionEncoderCounts());
-        telemetry.addData("isA?", gamepad2.a);
-        telemetry.addData("Encoding", mecanumSubsystem.encoderCounts());
+        telemetry.addData("rotate", armSubsystem.rotatePos());
+//        telemetry.addData("isA?", gamepad2.a);
+//        telemetry.addData("Encoding", mecanumSubsystem.encoderCounts());
 
         double forward = -gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x;
-        double strafe = gamepad1.left_stick_x;
+        double strafe = -gamepad1.left_stick_x;
         double elevate = -gamepad2.left_stick_y;
-        double extend = gamepad2.right_stick_y;
+        double extend = -gamepad2.right_stick_y;
+        double rotate = gamepad2.left_stick_x;
 
-        if(gamepad2.a && !armSubsystem.blockInGrabber()){
-            armSubsystem.intake(1);
-        } else if (gamepad2.b){
-            armSubsystem.intake(-1);
-        }else{
-            armSubsystem.intake(0);
+//        if(gamepad2.a && !armSubsystem.blockInGrabber()){
+//            armSubsystem.intake(1);
+//        } else if (gamepad2.b){
+//            armSubsystem.intake(-1);
+//        }else{
+//            armSubsystem.intake(0);
+//        }
+
+        if(gamepad2.a){
+            armSubsystem.upDown(0.72);
+        }else if(gamepad2.b){
+            armSubsystem.upDown(0);
+        }else if(gamepad2.x){
+            armSubsystem.upDown(0.1);
+        }else if(gamepad2.y){
+            armSubsystem.upDown(0.45);
         }
 
+        if(gamepad2.right_trigger > 0.1){
+            armSubsystem.intake(-1);
+        }else if(gamepad2.left_trigger > 0.1){
+            armSubsystem.intake(1);
+        }else {
+            armSubsystem.intake(0);
+        }
         mecanumSubsystem.TeleOperatedDrive(forward, strafe, turn);
         elevatorSubsystem.elevatorLift(elevate);
         armSubsystem.extendIntake(extend);
+        armSubsystem.rotatePower(rotate);
 
         telemetry.update();
     }

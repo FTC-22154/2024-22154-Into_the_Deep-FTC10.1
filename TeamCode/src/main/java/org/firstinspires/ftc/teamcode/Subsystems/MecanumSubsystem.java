@@ -75,10 +75,10 @@ public class MecanumSubsystem {
             for (int i = 0; i < speeds.length; i++) speeds[i] /= max;
         }
 
-        lf.setPower(0.25*speeds[0]);
-        rf.setPower(-0.25*speeds[1]);
-        lr.setPower(0.25*speeds[2]);
-        rr.setPower(-0.25*speeds[3]);
+        lf.setPower(speeds[0]);
+        rf.setPower(-1*speeds[1]);
+        lr.setPower(speeds[2]);
+        rr.setPower(-1*speeds[3]);
     }
 
     public void encoderDrive(String direction, int counts){
