@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -13,13 +14,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class MecanumSubsystem {
 
     DcMotor lf, lr, rf, rr;
-    DcMotor le,re,me;
     /*
     lf is left front drive
     lr is left rear drive
     rf is right front drive
     rr is right rear drive
     */
+
+    Rev2mDistanceSensor lds, bds, rds;
 
     public MecanumSubsystem (HardwareMap hardwareMap){
 
@@ -28,9 +30,6 @@ public class MecanumSubsystem {
         lr = hardwareMap.get(DcMotor.class,"lr");
         rr = hardwareMap.get(DcMotor.class,"rr");
         rf = hardwareMap.get(DcMotor.class,"rf");
-       // le = hardwareMap.get(DcMotor.class,"le");
-        //        re = hardwareMap.get(Encoder.class,"re");
-//        me = hardwareMap.get(Encoder.class,"me");
 
         //Set Motors to Brake Mode
         lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

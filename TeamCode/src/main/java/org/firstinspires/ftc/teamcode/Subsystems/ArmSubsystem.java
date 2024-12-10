@@ -1,18 +1,21 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.AnalogSensor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+@Config
 public class ArmSubsystem {
-
+    public static class Params {
+        public double myTestParam = 0.0;
+    }
+public static ArmSubsystem.Params PARAMS = new ArmSubsystem.Params();
     DcMotor exm, rm;
 
     Servo lr, ud;
@@ -82,6 +85,13 @@ public class ArmSubsystem {
         }
     }
 
+    public void extendPower(double power){
+        if(exm.getMode() != DcMotor.RunMode.RUN_USING_ENCODER){
+            exm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        exm.setPower(power);
+    }
+
     public void leftRight(double position){
         lr.setPosition(position);
     }
@@ -119,6 +129,7 @@ public class ArmSubsystem {
     public double rotatePos(){
         return rm.getCurrentPosition();
     }
+    public double getTestParam() { return PARAMS.myTestParam; }
 
     public void rotatePower(double power){
         if(rm.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
@@ -150,6 +161,18 @@ public class ArmSubsystem {
 
     public double armDist(){
         return ds.getDistance(DistanceUnit.INCH);
+    }
+
+    public void extendDistance(double distance){
+    // New line of Code not finished -->    if(exm.)
+        double targetDist = distance;
+        if(targetDist - 0.5 > armDist()){
+            exm.setPower(0.5);
+        } else if(targetDist +  0.5 < armDist()){
+            exm.setPower(-0.5);
+        } else {
+            exm.setPower(0);
+        }
     }
 
 //    public void intake(double power){
