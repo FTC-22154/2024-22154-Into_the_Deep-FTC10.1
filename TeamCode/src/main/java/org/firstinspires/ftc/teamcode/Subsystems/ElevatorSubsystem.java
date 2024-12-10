@@ -3,23 +3,30 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class ElevatorSubsystem{
 
     DcMotor elm, erm;
+    Servo ehl, ehr;
 
     public ElevatorSubsystem(HardwareMap hardwareMap){
 
         elm = hardwareMap.get(DcMotor.class,"elm");
         erm = hardwareMap.get(DcMotor.class,"erm");
+        ehl = hardwareMap.get(Servo.class, "ehl");
+        ehr = hardwareMap.get(Servo.class, "ehr");
 
         elm.setDirection(DcMotor.Direction.REVERSE);
         erm.setDirection(DcMotor.Direction.FORWARD);
+        ehl.setDirection(Servo.Direction.REVERSE);
 
 //        elm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        erm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elm.setTargetPosition(0);
         erm.setTargetPosition(0);
+        ehl.setPosition(0);
+        ehr.setPosition(0);
 
         elm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         erm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -35,6 +42,7 @@ public class ElevatorSubsystem{
     }
 
     public void elevatorLift(double power){
+
         if(power > 0.03) {
             elm.setTargetPosition(elm.getCurrentPosition() + 200);
             erm.setTargetPosition(erm.getCurrentPosition() + 200);
@@ -42,6 +50,8 @@ public class ElevatorSubsystem{
             elm.setTargetPosition(elm.getCurrentPosition() - 200);
             erm.setTargetPosition(erm.getCurrentPosition() - 200);
         }
+        elm.setPower(power);
+        erm.setPower(power);
     }
 
     public void encoderElevator(String direction, int counts){
@@ -89,6 +99,11 @@ public class ElevatorSubsystem{
 
     public boolean eleMotorsBusy(){
         return elm.isBusy() || erm.isBusy();
+    }
+
+    public void eleHook(double pos){
+        ehl.setPosition(pos);
+        ehr.setPosition(pos);
     }
 
     public void eleMotorsOff(){

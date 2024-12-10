@@ -29,13 +29,13 @@ public class TeleOpTest extends OpMode {
 //        telemetry.addData("rightElevatorEncoderCounts", elevatorSubsystem.rightEncoderCounts());
         telemetry.addData("extensionMotorEncoderCounts", armSubsystem.extensionEncoderCounts());
         telemetry.addData("rotate", armSubsystem.rotatePos());
+        telemetry.addData("armDistance", armSubsystem.armDist());
 //        telemetry.addData("isA?", gamepad2.a);
 //        telemetry.addData("Encoding", mecanumSubsystem.encoderCounts());
 
         double forward = -gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x;
         double strafe = -gamepad1.left_stick_x;
-        double elevate = -gamepad2.left_stick_y;
         double extend = -gamepad2.right_stick_y;
         double rotate = gamepad2.left_stick_x;
 
@@ -64,8 +64,22 @@ public class TeleOpTest extends OpMode {
         }else {
             armSubsystem.intake(0);
         }
+
+        if(gamepad1.left_trigger > 0.1){
+            elevatorSubsystem.elevatorLift(gamepad1.left_trigger);
+        } else if(gamepad1.right_trigger > 0.1){
+            elevatorSubsystem.elevatorLift(-gamepad1.right_trigger);
+        }
+
+        if(gamepad1.a){
+            elevatorSubsystem.eleHook(2);
+        }else if(gamepad1.b){
+            elevatorSubsystem.eleHook(-2);
+        } else if (gamepad1.y){
+            elevatorSubsystem.eleHook(0);
+        }
+
         mecanumSubsystem.TeleOperatedDrive(forward, strafe, turn);
-        elevatorSubsystem.elevatorLift(elevate);
         armSubsystem.extendIntake(extend);
         armSubsystem.rotatePower(rotate);
 

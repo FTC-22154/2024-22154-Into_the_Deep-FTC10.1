@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.AnalogSensor;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -7,6 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class ArmSubsystem {
 
@@ -18,10 +21,13 @@ public class ArmSubsystem {
 
     AnalogInput ls;
 
+    Rev2mDistanceSensor ds;
+
     public ArmSubsystem(HardwareMap hardwareMap){
         exm = hardwareMap.get(DcMotor.class,"exm");
         rm = hardwareMap.get(DcMotor.class,"rm");
         ls = hardwareMap.get(AnalogInput.class, "ls");
+        ds = hardwareMap.get(Rev2mDistanceSensor.class, "ds");
         lr = hardwareMap.get(Servo.class,"leri");
         ud = hardwareMap.get(Servo.class,"ud");
         intakeServoL = hardwareMap.get(CRServo.class, "inServL");
@@ -30,7 +36,7 @@ public class ArmSubsystem {
         exm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        ud.setPosition(0);
+        ud.setPosition(0.72);
 
         exm.setDirection(DcMotor.Direction.FORWARD);
         rm.setDirection(DcMotor.Direction.REVERSE);
@@ -41,7 +47,11 @@ public class ArmSubsystem {
 
         exm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        exm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        exm.setTargetPosition(0);
+        exm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        exm.setPower(.5);
+
+
         rm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
@@ -56,8 +66,20 @@ public class ArmSubsystem {
     }
 
     public void extendIntake(double power){
-        exm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        exm.setPower(power);
+        if(exm.getCurrentPosition() <= 100 && power < 0){
+            exm.setPower(0);
+        }else if(exm.getCurrentPosition() >= 2800 && power > 0){
+            exm.setPower(1);
+            exm.setTargetPosition(exm.getCurrentPosition());
+        }else {
+            if(power > 0.03) {
+                exm.setPower(1);
+                exm.setTargetPosition(exm.getCurrentPosition() + 200);
+            } else if(power < -0.03){
+                exm.setPower(1);
+                exm.setTargetPosition(exm.getCurrentPosition() - 200);
+            }
+        }
     }
 
     public void leftRight(double position){
@@ -99,16 +121,13 @@ public class ArmSubsystem {
     }
 
     public void rotatePower(double power){
-        if(power > 0.1) {
+        if(rm.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
             rm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rm.setPower(power);
-        }else if(power < -0.1){
-            rm.setPower(power * 0.25);
-        }else {
-            rm.setPower(0);
         }
+        rm.setPower(power);
     }
     public void rotate(int position){
+        //-365 & 7200
         rm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rm.setTargetPosition(position);
         if(rm.getTargetPosition() > rm.getCurrentPosition()){
@@ -127,6 +146,10 @@ public class ArmSubsystem {
         } else {
             exm.setPower(0.75);
         }
+    }
+
+    public double armDist(){
+        return ds.getDistance(DistanceUnit.INCH);
     }
 
 //    public void intake(double power){
