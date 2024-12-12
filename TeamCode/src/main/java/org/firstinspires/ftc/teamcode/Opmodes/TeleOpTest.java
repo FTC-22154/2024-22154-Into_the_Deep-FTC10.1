@@ -33,7 +33,8 @@ public class TeleOpTest extends OpMode {
         telemetry.addData("leftFrontEncoderCounts", mecanumSubsystem.leftFrontCounts());
         telemetry.addData("rightFrontEncoderCounts", mecanumSubsystem.rightFrontCounts());
         telemetry.addData("rightRearEncoderCounts", mecanumSubsystem.rightRearCounts());
-        telemetry.addData("isA?", gamepad2.a);
+        //telemetry.addData("isA?", gamepad2.a);
+        telemetry.addData("Test Param",mecanumSubsystem.getTestParam());
 
 
         double forward = -gamepad1.left_stick_y;

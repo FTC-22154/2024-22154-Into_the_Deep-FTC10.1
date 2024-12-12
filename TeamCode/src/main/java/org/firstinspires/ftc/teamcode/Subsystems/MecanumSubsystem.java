@@ -1,10 +1,18 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class MecanumSubsystem {
+import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 
+@Config
+public class MecanumSubsystem {
+    public static class Params {
+        public double myTestParam = 0.0; // Testing only
+    }
+
+    public static MecanumSubsystem.Params PARAMS = new MecanumSubsystem.Params();
     DcMotor lf, lr, rf, rr;
     /*
     lf is left front drive
@@ -56,6 +64,8 @@ public class MecanumSubsystem {
     public int rightRearCounts(){
         return  rr.getCurrentPosition();
     }
+
+    public double getTestParam(){ return PARAMS.myTestParam;}
 
     public void TeleOperatedDrive(double forward, double strafe, double turn) {
 
