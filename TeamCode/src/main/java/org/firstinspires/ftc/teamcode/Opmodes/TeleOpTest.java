@@ -13,10 +13,6 @@ public class TeleOpTest extends OpMode {
     MecanumSubsystem mecanumSubsystem;
     ElevatorSubsystem elevatorSubsystem;
     ArmSubsystem armSubsystem;
-    static final double lowerExtensionBound = 6.75;
-    static final double upperExtensionBound = 40;
-    static final double lowerBucketExtension = 18;
-    static final double upperBucketExtension = 36;
 
     @Override
     public void init(){
@@ -51,13 +47,13 @@ public class TeleOpTest extends OpMode {
 //            armSubsystem.intake(0);
 //        }
 
-        if(gamepad2.y){
+        if(gamepad2.a){
             armSubsystem.upDown(0.72);
-        }else if(gamepad2.x){
-            armSubsystem.upDown(0);
-        }else if(gamepad2.a){
-            armSubsystem.upDown(0.1);
         }else if(gamepad2.b){
+            armSubsystem.upDown(0);
+        }else if(gamepad2.x){
+            armSubsystem.upDown(0.1);
+        }else if(gamepad2.y){
             armSubsystem.upDown(0.45);
         }
 
@@ -83,24 +79,10 @@ public class TeleOpTest extends OpMode {
             elevatorSubsystem.eleHook(0);
         }
 
-        if(armSubsystem.armDist() < lowerExtensionBound){
-            armSubsystem.extendIntake(1);
-        } else if (armSubsystem.armDist() > upperExtensionBound){
-            armSubsystem.extendIntake(-1);
-        } else {
-            if(gamepad2.right_bumper){
-                armSubsystem.extendDistance(upperBucketExtension);
-            } else if(gamepad2.left_bumper){
-                armSubsystem.extendDistance(lowerBucketExtension);
-            } else {
-                armSubsystem.extendIntake(extend);
-            }
-        }
-
         mecanumSubsystem.TeleOperatedDrive(forward, strafe, turn);
-        //armSubsystem.extendPower(extend);
+        armSubsystem.extendIntake(extend);
         armSubsystem.rotatePower(rotate);
-        telemetry.addData("My test param",armSubsystem.getTestParam());
+
         telemetry.update();
     }
 }
