@@ -10,13 +10,20 @@ import org.firstinspires.ftc.teamcode.Subsystems.MecanumSubsystem;
 @TeleOp(name = "Teleop", group = "TeleOp")
 public class TeleOpTest extends OpMode {
 
+    public static class Params {
+        // Enter your constants below!! :) <--
+        static double lowerExtensionBound = 6.75;
+        static double upperExtensionBound = 40;
+        static double lowerBucketExtension = 18;
+        static double upperBucketExtension = 36;
+
+    }
+
+    public static TeleOpTest.Params PARAMS = new TeleOpTest.Params();
+
     MecanumSubsystem mecanumSubsystem;
     ElevatorSubsystem elevatorSubsystem;
     ArmSubsystem armSubsystem;
-    static final double lowerExtensionBound = 6.75;
-    static final double upperExtensionBound = 40;
-    static final double lowerBucketExtension = 18;
-    static final double upperBucketExtension = 36;
 
     @Override
     public void init(){
@@ -32,8 +39,9 @@ public class TeleOpTest extends OpMode {
 //        telemetry.addData("leftElevatorEncoderCounts", elevatorSubsystem.leftEncoderCounts());
 //        telemetry.addData("rightElevatorEncoderCounts", elevatorSubsystem.rightEncoderCounts());
         telemetry.addData("extensionMotorEncoderCounts", armSubsystem.extensionEncoderCounts());
-        telemetry.addData("rotate", armSubsystem.rotatePos());
+        telemetry.addData("rotate", armSubsystem.getRotatePos());
         telemetry.addData("armDistance", armSubsystem.armDist());
+        telemetry.addData("Pivot Tgt",armSubsystem.pivotGetTargetPos());
 //        telemetry.addData("isA?", gamepad2.a);
 //        telemetry.addData("Encoding", mecanumSubsystem.encoderCounts());
 
@@ -41,7 +49,7 @@ public class TeleOpTest extends OpMode {
         double turn = gamepad1.right_stick_x;
         double strafe = -gamepad1.left_stick_x;
         double extend = -gamepad2.right_stick_y;
-        double rotate = gamepad2.left_stick_x;
+        double rotate = -gamepad2.left_stick_y;
 
 //        if(gamepad2.a && !armSubsystem.blockInGrabber()){
 //            armSubsystem.intake(1);
@@ -52,13 +60,13 @@ public class TeleOpTest extends OpMode {
 //        }
 
         if(gamepad2.y){
-            armSubsystem.upDown(0.72);
+            armSubsystem.wristUpDown(0.72);
         }else if(gamepad2.x){
-            armSubsystem.upDown(0);
+            armSubsystem.wristUpDown(0);
         }else if(gamepad2.a){
-            armSubsystem.upDown(0.1);
+            armSubsystem.wristUpDown(0.1);
         }else if(gamepad2.b){
-            armSubsystem.upDown(0.45);
+            armSubsystem.wristUpDown(0.45);
         }
 
         if(gamepad2.right_trigger > 0.1){
@@ -67,6 +75,12 @@ public class TeleOpTest extends OpMode {
             armSubsystem.intake(1);
         }else {
             armSubsystem.intake(0);
+        }
+
+        if(gamepad2.dpad_down){armSubsystem.smplPickup();}
+        else if(gamepad2.dpad_up){armSubsystem.smplPlaceHigh();}
+        else if(gamepad2.dpad_left){armSubsystem.specPlaceHigh();}
+        else if(gamepad2.dpad_right){armSubsystem.specPlaceHigh();
         }
 
         if(gamepad1.left_trigger > 0.1){
@@ -83,15 +97,15 @@ public class TeleOpTest extends OpMode {
             elevatorSubsystem.eleHook(0);
         }
 
-        if(armSubsystem.armDist() < lowerExtensionBound){
+        if(armSubsystem.armDist() < PARAMS.lowerExtensionBound){
             armSubsystem.extendIntake(1);
-        } else if (armSubsystem.armDist() > upperExtensionBound){
+        } else if (armSubsystem.armDist() > PARAMS.upperExtensionBound){
             armSubsystem.extendIntake(-1);
         } else {
             if(gamepad2.right_bumper){
-                armSubsystem.extendDistance(upperBucketExtension);
+                armSubsystem.extendDistance(PARAMS.upperBucketExtension);
             } else if(gamepad2.left_bumper){
-                armSubsystem.extendDistance(lowerBucketExtension);
+                armSubsystem.extendDistance(PARAMS.lowerBucketExtension);
             } else {
                 armSubsystem.extendIntake(extend);
             }
@@ -99,7 +113,7 @@ public class TeleOpTest extends OpMode {
 
         mecanumSubsystem.TeleOperatedDrive(forward, strafe, turn);
         //armSubsystem.extendPower(extend);
-        armSubsystem.rotatePower(rotate);
+        armSubsystem.pivotByPos(-rotate);
         telemetry.addData("My test param",armSubsystem.getTestParam());
         telemetry.update();
     }
