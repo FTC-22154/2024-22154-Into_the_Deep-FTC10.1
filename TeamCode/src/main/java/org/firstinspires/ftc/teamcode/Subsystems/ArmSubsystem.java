@@ -5,7 +5,6 @@ import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -27,18 +26,27 @@ public class ArmSubsystem {
     public static class Params {
         // Enter your constants below!! :) <--
         public double myTestParam = 0.0;
-        public int pivotSpecIntakePos = -90;
-        public int pivotSpecDeliverPos = 200;
-        public int pivotSmplInPos = -980;
-        public int pivotSmplDeliverPos = 1590;
-        public int pivotUpLimit = 2200;
+        public int pivotSpecIntakePos = -750;
+        public int pivotSpecDeliverPos = 1800;
+        public int pivotSmplInPos = -750;
+        public int pivotSmplDeliverPos = 1800;
+        public int pivotArmUpLimit = 1850;
         public int pivotDownLimit = (pivotSmplInPos - 40);
-        public int pivotR2PIncrements = 50;
+        public int pivotR2PIncrements = 200;
         public int pivotR2PCloseEnough = 10;
-        public double wristSmplIn = 0.2;
-        public double wristSmplDeliver = 0.3;
-        public double wristSpecIn = 0.2;
-        public double wristSpecDeliver = 0.3;
+        public double wristSmplIn = 0.1;
+        public double wristSpecIn = 0.45;
+        public double wristDeliverPos = 0.72;
+        public double extendIntakePwr = 0.5;
+        public double pivotRoutinesPwr = 0.8;
+        public double pivotManualPwr = 0.4;
+        public int extendHighPivotMax = 2800;
+        public int extendLowPivotMax = 1100;
+        public int extendRetractLimit = 0;
+        public int extendR2PIncrements = 100;
+        public int extendSpecDeliverPos = 1100;
+        public int extendSmplDeliverPos = 2600;
+        public int extendRetractPos = 50;
     }
 
     public static ArmSubsystem.Params PARAMS = new ArmSubsystem.Params();
@@ -65,7 +73,7 @@ public class ArmSubsystem {
 
         //pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        wristServo.setPosition(0.72);
+        //wristServo.setPosition(0.72);
 
         intakeServoL.setDirection(CRServo.Direction.REVERSE);
         exm.setDirection(DcMotor.Direction.FORWARD);
@@ -94,22 +102,36 @@ public class ArmSubsystem {
         exm.setTargetPosition(position);
     }
 
-    public void extendIntake(double power){
-        if(exm.getCurrentPosition() <= 100 && power < 0){
+    public void extendIntake(double CtrlInput, int extendCodeTgtPos){
+
+        int extendMotorCurPos = exm.getCurrentPosition();
+        if(extendMotorCurPos <= PARAMS.extendRetractLimit && CtrlInput < 0.01){
             exm.setPower(0);
-        }else if(exm.getCurrentPosition() >= 2800 && power > 0){
-            exm.setPower(1);
-            exm.setTargetPosition(exm.getCurrentPosition());
-        }else {
-            if(power > 0.03) {
-                exm.setPower(1);
-                exm.setTargetPosition(exm.getCurrentPosition() + 200);
-            } else if(power < -0.03){
-                exm.setPower(1);
-                exm.setTargetPosition(exm.getCurrentPosition() - 200);
+        }else if(extendMotorCurPos >= PARAMS.extendHighPivotMax && CtrlInput > 0.02){
+            exm.setPower(PARAMS.extendIntakePwr);
+            exm.setTargetPosition(PARAMS.extendHighPivotMax);
+        }else if(extendMotorCurPos > PARAMS.extendLowPivotMax && CtrlInput > 0 && pivotMotor.getTargetPosition() <= 0) {
+            exm.setPower(PARAMS.extendIntakePwr);
+            exm.setTargetPosition(PARAMS.extendLowPivotMax);
+        } else if(CtrlInput == 0.0111 && extendCodeTgtPos != 99999){
+            exm.setPower(PARAMS.extendIntakePwr);
+            exm.setTargetPosition(extendCodeTgtPos);
+
+        }
+        else {
+            if(CtrlInput > 0.03) {
+                exm.setPower(PARAMS.extendIntakePwr);
+                exm.setTargetPosition(extendMotorCurPos + PARAMS.extendR2PIncrements);
+            } else if(CtrlInput < -0.03){
+                exm.setPower(PARAMS.extendIntakePwr);
+                exm.setTargetPosition(extendMotorCurPos - PARAMS.extendR2PIncrements);
             }
         }
     }
+
+    public boolean extendMotorBusy(){ return exm.isBusy(); }
+    public boolean pivotMotorBusy(){ return pivotMotor.isBusy(); }
+
 
     public void extendPower(double power){
         if(exm.getMode() != DcMotor.RunMode.RUN_USING_ENCODER){
@@ -129,18 +151,22 @@ public class ArmSubsystem {
     public void smplPickup(){
         wristUpDown(PARAMS.wristSmplIn);
         pivotToPos(PARAMS.pivotSmplInPos);
+        extendIntake(0.0111,PARAMS.extendRetractPos);
     }
     public void specPickup(){
         wristUpDown(PARAMS.wristSpecIn);
         pivotToPos(PARAMS.pivotSpecIntakePos);
+        extendIntake(0.01111,PARAMS.extendRetractPos);
     }
     public void specPlaceHigh(){
-        wristUpDown(PARAMS.wristSpecDeliver);
+        wristUpDown(PARAMS.wristDeliverPos);
         pivotToPos(PARAMS.pivotSpecDeliverPos);
+        extendIntake(0.0111,PARAMS.extendSpecDeliverPos);
     }
     public void smplPlaceHigh(){
-        wristUpDown(PARAMS.wristSmplDeliver);
+        wristUpDown(PARAMS.wristDeliverPos);
         pivotToPos(PARAMS.pivotSmplDeliverPos);
+        extendIntake(0.0111,PARAMS.extendSmplDeliverPos);
     }
     public void home(){
         wristUpDown(0);
@@ -157,13 +183,14 @@ public class ArmSubsystem {
     public void rotatePower(double power){
         if(pivotMotor.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
             pivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-        pivotMotor.setPower(power);
+        }        int pivotMotorCurPos = pivotMotor.getCurrentPosition();
+
+        pivotMotor.setPower(PARAMS.pivotRoutinesPwr);
     }
 
     public void pivotByPos(double ctrlPower){
-        int pivotMotorCurPos = pivotMotor.getCurrentPosition();
         // First, stop moving if we're not trying to move, or if it's close enough to last new target
+        int pivotMotorCurPos = pivotMotor.getCurrentPosition();
         if((ctrlPower == 0) /* ||  (Math.abs(pivotMotorCurPos - pivotMotor.getTargetPosition()) < PARAMS.pivotR2PCloseEnough)*/) {
             pivotMotor.setTargetPosition(pivotMotorCurPos);
             pivotMotor.setPower(0);
@@ -173,16 +200,16 @@ public class ArmSubsystem {
             pivotMotor.setTargetPosition(pivotMotorCurPos);
             pivotMotor.setPower(0);
         } /* stop moving at lower limit */
-            else if(pivotMotor.getCurrentPosition() >= PARAMS.pivotUpLimit && ctrlPower > 0){
+            else if(pivotMotor.getCurrentPosition() >= PARAMS.pivotArmUpLimit && ctrlPower > 0){
             pivotMotor.setPower(0);
             pivotMotor.setTargetPosition(pivotMotor.getCurrentPosition());
         } /* Still here? OK, we're good to set/move to new Pos */
             else {
             if(ctrlPower > 0.03) {
-                pivotMotor.setPower(1);
+                pivotMotor.setPower(PARAMS.pivotRoutinesPwr);
                 pivotMotor.setTargetPosition(pivotMotor.getCurrentPosition() + PARAMS.pivotR2PIncrements);
             } else if(ctrlPower < -0.03){
-                pivotMotor.setPower(1);
+                pivotMotor.setPower(PARAMS.pivotRoutinesPwr);
                 pivotMotor.setTargetPosition(pivotMotor.getCurrentPosition() - PARAMS.pivotR2PIncrements);
             }
         }
@@ -192,9 +219,9 @@ public class ArmSubsystem {
         //pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pivotMotor.setTargetPosition(position);
         if(pivotMotor.getTargetPosition() > pivotMotor.getCurrentPosition()){
-            pivotMotor.setPower(0.5);
+            pivotMotor.setPower(PARAMS.pivotRoutinesPwr);
         } else {
-            pivotMotor.setPower(-0.5);
+            pivotMotor.setPower(PARAMS.pivotRoutinesPwr);
         }
     }
 
@@ -203,9 +230,9 @@ public class ArmSubsystem {
         int eTarget = Math.toIntExact(Math.round(exm.getCurrentPosition() + counts));
         exm.setTargetPosition(eTarget);
         if(counts < 0){
-            exm.setPower(-0.75);
+            exm.setPower(PARAMS.extendIntakePwr);
         } else {
-            exm.setPower(0.75);
+            exm.setPower(PARAMS.extendIntakePwr);
         }
     }
 
@@ -217,9 +244,9 @@ public class ArmSubsystem {
     // New line of Code not finished -->    if(exm.)
         double targetDist = distance;
         if(targetDist - 0.5 > armDist()){
-            exm.setPower(0.5);
+            exm.setPower(PARAMS.extendIntakePwr);
         } else if(targetDist +  0.5 < armDist()){
-            exm.setPower(-0.5);
+            exm.setPower(PARAMS.extendIntakePwr);
         } else {
             exm.setPower(0);
         }
@@ -235,5 +262,6 @@ public class ArmSubsystem {
 
     public int extensionEncoderCounts(){return exm.getCurrentPosition();}
     public int pivotGetTargetPos(){return pivotMotor.getTargetPosition();}
+    public DcMotor.RunMode extendMotorGetMode(){return exm.getMode();}
 
 }
