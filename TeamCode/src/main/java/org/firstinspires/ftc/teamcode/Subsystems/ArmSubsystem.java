@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -28,7 +29,7 @@ public class ArmSubsystem {
         public double myTestParam = 0.0;
         public int pivotSpecIntakePos = -750;
         public int pivotSpecDeliverPos = 1800;
-        public int pivotSmplInPos = -750;
+        public int pivotSmplInPos = pivotSpecIntakePos;
         public int pivotSmplDeliverPos = 1800;
         public int pivotArmUpLimit = 1850;
         public int pivotDownLimit = (pivotSmplInPos - 40);
@@ -45,8 +46,10 @@ public class ArmSubsystem {
         public int extendRetractLimit = 0;
         public int extendR2PIncrements = 100;
         public int extendSpecDeliverPos = 1100;
-        public int extendSmplDeliverPos = 2600;
+        public int extendSmplDeliverPos = 2100;
         public int extendRetractPos = 50;
+        public int extendIsSafe2PivotPos = 1500;
+        public int pivotWait4ExtendTime = 500;
     }
 
     public static ArmSubsystem.Params PARAMS = new ArmSubsystem.Params();
@@ -149,14 +152,18 @@ public class ArmSubsystem {
     }
 
     public void smplPickup(){
+        extendIntake(0.0111,PARAMS.extendRetractPos);
+        if(pivotMotor.getCurrentPosition() >= PARAMS.extendIsSafe2PivotPos){
+            myWait(PARAMS.pivotWait4ExtendTime);
+        }
         wristUpDown(PARAMS.wristSmplIn);
         pivotToPos(PARAMS.pivotSmplInPos);
-        extendIntake(0.0111,PARAMS.extendRetractPos);
     }
     public void specPickup(){
+        extendIntake(0.01111,PARAMS.extendRetractPos);
+        if(pivotMotor.getCurrentPosition() >= PARAMS.extendIsSafe2PivotPos){ myWait(PARAMS.pivotWait4ExtendTime);}
         wristUpDown(PARAMS.wristSpecIn);
         pivotToPos(PARAMS.pivotSpecIntakePos);
-        extendIntake(0.01111,PARAMS.extendRetractPos);
     }
     public void specPlaceHigh(){
         wristUpDown(PARAMS.wristDeliverPos);
@@ -249,6 +256,13 @@ public class ArmSubsystem {
             exm.setPower(PARAMS.extendIntakePwr);
         } else {
             exm.setPower(0);
+        }
+    }
+
+    private void myWait(int sleeptime) {
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while (timer.milliseconds() < sleeptime) {
         }
     }
 

@@ -9,6 +9,12 @@ import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.MecanumSubsystem;
 
+// 1. Ready to Hang routine
+// 2. Switch intake to continuous w/ toggle on/off
+// 3. Stop moving before routines DONE
+// 4. Pickup routines wait for extend to retract some before moving pivot  DONE
+// - Write & use "myWait" in ArmSubsystem
+
 @TeleOp(name = "Teleop", group = "TeleOp")
 @Config
 public class TeleOpTest extends OpMode {
@@ -19,8 +25,7 @@ public class TeleOpTest extends OpMode {
         public double upperExtensionBound = 40;
         public double lowerBucketExtension = 18;
         public double upperBucketExtension = 36;
-        public double routinesTimeout = 4;
-
+        public double routinesTimeout = 3;
     }
 
     public static TeleOpTest.Params PARAMS = new TeleOpTest.Params();
@@ -74,8 +79,22 @@ public class TeleOpTest extends OpMode {
             armSubsystem.wristUpDown(armSubsystem.PARAMS.wristSpecIn);
         }
 
+/*  Exmple code to use whriting toggle for intake
+        // on a check current position and toggle to other position
+        if(gamepad2.a) {
+            int currentGrabPos = intakeSubsystem.specimenGrabGetPosition();
+
+            //if currently active, set grabber to safe position
+            if (currentGrabPos == 1) {
+                intakeSubsystem.specimenGrabSetPosition(grabSafePos);
+            } else if (currentGrabPos == 2) {
+                intakeSubsystem.specimenGrabSetPosition(grabActivePos);
+            }
+       */
+
         if(gamepad2.right_trigger > 0.1){
             armSubsystem.intake(-1);
+            // your while loop here
         }else if(gamepad2.left_trigger > 0.1){
             armSubsystem.intake(1);
         }else {
@@ -83,6 +102,7 @@ public class TeleOpTest extends OpMode {
         }
 
         if(gamepad2.dpad_down || gamepad2.dpad_up || gamepad2.dpad_left || gamepad2.dpad_right) {
+            mecanumSubsystem.TeleOperatedDrive(0,0,0);
             if (gamepad2.dpad_down) {
                 armSubsystem.smplPickup();
             } else if (gamepad2.dpad_up) {
@@ -114,7 +134,7 @@ public class TeleOpTest extends OpMode {
         if(armSubsystem.armDist() < PARAMS.lowerExtensionBound){
             armSubsystem.extendIntake(1, 99999);
         } else if (armSubsystem.armDist() > PARAMS.upperExtensionBound){
-            armSubsystem.extendIntake(-ArmSubsystem.PARAMS.extendIntakePwr, 99999);
+            armSubsystem.extendIntake(armSubsystem.PARAMS.extendIntakePwr, 99999);
         } else {
             if(gamepad2.right_bumper){
                 armSubsystem.extendDistance(PARAMS.upperBucketExtension);
@@ -130,6 +150,10 @@ public class TeleOpTest extends OpMode {
         armSubsystem.pivotByPos(-rotate);
         telemetry.addData("My test param",armSubsystem.getTestParam());
         telemetry.addData("Extend Motor RunMode",armSubsystem.extendMotorGetMode());
+        telemetry.addData("lr",mecanumSubsystem.encoderDrivelr());
+        telemetry.addData("lf",mecanumSubsystem.encoderDrivelf());
+        telemetry.addData("rr",mecanumSubsystem.encoderDriverrr());
+        telemetry.addData("rf",mecanumSubsystem.encoderDriverrf());
         telemetry.update();
     }
 }

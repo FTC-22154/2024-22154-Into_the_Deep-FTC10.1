@@ -184,5 +184,21 @@ public class MecanumSubsystem {
         lr.setPower(0);
         rr.setPower(0);
     }
+    public int encoderDrivelr(){
+        return lr.getCurrentPosition();
+
+    }
+    public int encoderDrivelf(){
+        return lf.getCurrentPosition();
+
+    }
+    public int encoderDriverrr(){
+        return rr.getCurrentPosition();
+
+    }
+    public int encoderDriverrf(){
+        return rf.getCurrentPosition();
+
+    }
 
 }
