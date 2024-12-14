@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Opmodes;
 
+import static java.lang.Thread.sleep;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,10 +12,11 @@ import org.firstinspires.ftc.teamcode.Subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.MecanumSubsystem;
 
 // 1. Ready to Hang routine
-// 2. Switch intake to continuous w/ toggle on/off
+// 2. Switch intake to continuous-in w/ Right Trigger toggle on/off, Out= hold LTrig
 // 3. Stop moving before routines DONE
 // 4. Pickup routines wait for extend to retract some before moving pivot  DONE
-// - Write & use "myWait" in ArmSubsystem
+// - Write & use "myWait" in ArmSubsystem DONE
+// -
 
 @TeleOp(name = "Teleop", group = "TeleOp")
 @Config
@@ -26,6 +29,8 @@ public class TeleOpTest extends OpMode {
         public double lowerBucketExtension = 18;
         public double upperBucketExtension = 36;
         public double routinesTimeout = 3;
+        public int intakeToggleSleepTimer = 70;
+        public double intakePwrToggleThreshold = 0;
     }
 
     public static TeleOpTest.Params PARAMS = new TeleOpTest.Params();
@@ -79,27 +84,21 @@ public class TeleOpTest extends OpMode {
             armSubsystem.wristUpDown(armSubsystem.PARAMS.wristSpecIn);
         }
 
-/*  Exmple code to use whriting toggle for intake
-        // on a check current position and toggle to other position
-        if(gamepad2.a) {
-            int currentGrabPos = intakeSubsystem.specimenGrabGetPosition();
-
-            //if currently active, set grabber to safe position
-            if (currentGrabPos == 1) {
-                intakeSubsystem.specimenGrabSetPosition(grabSafePos);
-            } else if (currentGrabPos == 2) {
-                intakeSubsystem.specimenGrabSetPosition(grabActivePos);
-            }
-       */
 
         if(gamepad2.right_trigger > 0.1){
-            armSubsystem.intake(-1);
-            // your while loop here
+            if(armSubsystem.intakeGetServoPwr() < PARAMS.intakePwrToggleThreshold) {
+                armSubsystem.intake(0);
+                mySleep(PARAMS.intakeToggleSleepTimer);
+            } else {
+                armSubsystem.intake(-1);
+                mySleep(PARAMS.intakeToggleSleepTimer);
+            }
         }else if(gamepad2.left_trigger > 0.1){
             armSubsystem.intake(1);
-        }else {
+        }else if(armSubsystem.intakeGetServoPwr() > PARAMS.intakePwrToggleThreshold) {
             armSubsystem.intake(0);
         }
+
 
         if(gamepad2.dpad_down || gamepad2.dpad_up || gamepad2.dpad_left || gamepad2.dpad_right) {
             mecanumSubsystem.TeleOperatedDrive(0,0,0);
@@ -155,5 +154,13 @@ public class TeleOpTest extends OpMode {
         telemetry.addData("rr",mecanumSubsystem.encoderDriverrr());
         telemetry.addData("rf",mecanumSubsystem.encoderDriverrf());
         telemetry.update();
+    }
+
+    public final void mySleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

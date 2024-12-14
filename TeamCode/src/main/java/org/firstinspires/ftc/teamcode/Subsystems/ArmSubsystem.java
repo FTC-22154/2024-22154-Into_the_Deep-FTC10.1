@@ -153,7 +153,7 @@ public class ArmSubsystem {
 
     public void smplPickup(){
         extendIntake(0.0111,PARAMS.extendRetractPos);
-        if(pivotMotor.getCurrentPosition() >= PARAMS.extendIsSafe2PivotPos){
+        if(exm.getCurrentPosition() >= PARAMS.extendIsSafe2PivotPos){
             myWait(PARAMS.pivotWait4ExtendTime);
         }
         wristUpDown(PARAMS.wristSmplIn);
@@ -161,7 +161,9 @@ public class ArmSubsystem {
     }
     public void specPickup(){
         extendIntake(0.01111,PARAMS.extendRetractPos);
-        if(pivotMotor.getCurrentPosition() >= PARAMS.extendIsSafe2PivotPos){ myWait(PARAMS.pivotWait4ExtendTime);}
+        if(exm.getCurrentPosition() >= PARAMS.extendIsSafe2PivotPos){
+            myWait(PARAMS.pivotWait4ExtendTime);
+        }
         wristUpDown(PARAMS.wristSpecIn);
         pivotToPos(PARAMS.pivotSpecIntakePos);
     }
@@ -270,12 +272,20 @@ public class ArmSubsystem {
 //        im.setPower(power);
 //    }
 
-    public boolean blockInGrabber(){
-        return ls.equals(true);
-    }
+
+    /* ================================================================================
+        Data Fetching Functions below this section break...
+    ===================================================================================*/
 
     public int extensionEncoderCounts(){return exm.getCurrentPosition();}
     public int pivotGetTargetPos(){return pivotMotor.getTargetPosition();}
     public DcMotor.RunMode extendMotorGetMode(){return exm.getMode();}
+
+    public double intakeGetServoPwr() { return intakeServoL.getPower() + intakeServoR.getPower();}
+
+
+    public boolean blockInGrabber(){
+        return ls.equals(true);
+    }
 
 }
