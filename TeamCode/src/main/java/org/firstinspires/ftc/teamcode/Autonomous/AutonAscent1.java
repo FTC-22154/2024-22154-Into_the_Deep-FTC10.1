@@ -13,13 +13,14 @@ public class AutonAscent1 extends LinearOpMode {
 
     // params to configure from the robot's FTC Dashboard
     public static class Params {
-        public int step1Sleep = 1500;
+        public int step1Sleep = 2000;
         public double step1Pwr = 0.5;
-        public int step2Sleep = 1440;
+        public int step2Sleep = 1000;
         public double step2Pwr = 0.5;
-        public int step3Sleep = 3000;
-        public int step4Sleep = 1500;
-        public double step4Pwr = 0.5;
+        public int step3Sleep = 2000;
+        public int Step3Pos = 900;
+        public int step4Sleep = 2500;
+        public double step4Pwr = 0.2;
     }
 
     public static AutonAscent1.Params myParams = new AutonAscent1.Params();
@@ -44,7 +45,7 @@ public class AutonAscent1 extends LinearOpMode {
         /* Stop */ myMecanumSubsystem.TeleOperatedDrive(0,0,0);
 
         // Step 3
-        armSubsystem.pivotToPos(armSubsystem.PARAMS.pivotSpecDeliverPos);
+        armSubsystem.pivotToPos(myParams.Step3Pos);
         sleep(myParams.step3Sleep);
 
         // Step 4
