@@ -54,6 +54,7 @@ public class TeleOpTest extends OpMode {
 //        telemetry.addData("leftElevatorEncoderCounts", elevatorSubsystem.leftEncoderCounts());
 //        telemetry.addData("rightElevatorEncoderCounts", elevatorSubsystem.rightEncoderCounts());
         telemetry.addData("extensionMotorEncoderCounts", armSubsystem.extensionEncoderCounts());
+        telemetry.addData("extensionMotorEncoderTarget", armSubsystem.extensionEncoderTarget());
         telemetry.addData("rotate", armSubsystem.getRotatePos());
         telemetry.addData("armDistance", armSubsystem.armDist());
         telemetry.addData("Pivot Tgt",armSubsystem.pivotGetTargetPos());

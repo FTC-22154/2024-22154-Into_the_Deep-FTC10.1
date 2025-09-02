@@ -41,7 +41,7 @@ public class ArmSubsystem {
         public double extendIntakePwr = 0.5;
         public double pivotRoutinesPwr = 0.8;
         public double pivotManualPwr = 0.4;
-        public int extendHighPivotMax = 2800;
+        public int extendHighPivotMax = 2400;
         public int extendLowPivotMax = 1100;
         public int extendRetractLimit = 0;
         public int extendR2PIncrements = 100;
@@ -110,18 +110,15 @@ public class ArmSubsystem {
         int extendMotorCurPos = exm.getCurrentPosition();
         if(extendMotorCurPos <= PARAMS.extendRetractLimit && CtrlInput < 0.01){
             exm.setPower(0);
-        }else if(extendMotorCurPos >= PARAMS.extendHighPivotMax && CtrlInput > 0.02){
-            exm.setPower(PARAMS.extendIntakePwr);
-            exm.setTargetPosition(PARAMS.extendHighPivotMax);
-        }else if(extendMotorCurPos > PARAMS.extendLowPivotMax && CtrlInput > 0 && pivotMotor.getTargetPosition() <= 0) {
+        }else if(extendMotorCurPos >= PARAMS.extendHighPivotMax && CtrlInput > 0.01){
+            exm.setPower(0);
+        }/*else if(extendMotorCurPos > PARAMS.extendLowPivotMax && CtrlInput > 0 && pivotMotor.getTargetPosition() <= 0) {
             exm.setPower(PARAMS.extendIntakePwr);
             exm.setTargetPosition(PARAMS.extendLowPivotMax);
-        } else if(CtrlInput == 0.0111 && extendCodeTgtPos != 99999){
+        } */else if(CtrlInput == 0.0111 && extendCodeTgtPos != 99999){
             exm.setPower(PARAMS.extendIntakePwr);
             exm.setTargetPosition(extendCodeTgtPos);
-
-        }
-        else {
+        } else {
             if(CtrlInput > 0.03) {
                 exm.setPower(PARAMS.extendIntakePwr);
                 exm.setTargetPosition(extendMotorCurPos + PARAMS.extendR2PIncrements);
@@ -278,6 +275,7 @@ public class ArmSubsystem {
     ===================================================================================*/
 
     public int extensionEncoderCounts(){return exm.getCurrentPosition();}
+    public int extensionEncoderTarget(){return exm.getTargetPosition();}
     public int pivotGetTargetPos(){return pivotMotor.getTargetPosition();}
     public DcMotor.RunMode extendMotorGetMode(){return exm.getMode();}
 
